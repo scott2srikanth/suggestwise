@@ -1,0 +1,1 @@
+export default function NotFound(){return <main className="page empty"><h1>This car or page is unavailable.</h1><p>It may have moved or been unpublished. Explore the current catalogue to continue.</p><a className="primary" href="/cars">Explore cars</a></main>}

@@ -1,0 +1,4 @@
+import {getChatGPTUser} from '@/app/chatgpt-auth';
+export class ApiError extends Error{constructor(message:string,public status:number){super(message)}}
+export async function requireAdmin(request:Request){const user=await getChatGPTUser();if(!user)throw new ApiError('Sign in with ChatGPT to manage this private CARWISE catalogue.',401);if(!['GET','HEAD'].includes(request.method)){const origin=request.headers.get('origin');if(!origin||origin!==new URL(request.url).origin)throw new ApiError('This request must come from the CARWISE dashboard.',403);}return user;}
+export function apiError(error:unknown){if(error instanceof ApiError)return Response.json({error:error.message},{status:error.status});console.error('CARWISE API failure',error instanceof Error?error.message:'unknown');return Response.json({error:'Storage is temporarily unavailable. Your input is preserved; please try again.'},{status:503});}

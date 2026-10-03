@@ -1,0 +1,384 @@
+{
+  "schemaVersion": 1,
+  "cars": [
+    {
+      "id": "your-brand-your-model-your-variant",
+      "brand": "Your brand",
+      "model": "Your model",
+      "variant": "Your variant",
+      "year": 2026,
+      "status": "draft",
+      "dataMode": "sourced",
+      "bodyType": "SUV",
+      "fuelType": "Petrol",
+      "transmission": "Automatic",
+      "exShowroomPrice": {
+        "value": null,
+        "unit": "INR",
+        "sourceType": "manufacturer",
+        "source": "",
+        "lastUpdated": "2026-10-03",
+        "confidence": "low"
+      },
+      "onRoadPrice": {},
+      "engine": {
+        "value": null,
+        "sourceType": "manufacturer",
+        "source": "",
+        "lastUpdated": "2026-10-03",
+        "confidence": "low"
+      },
+      "power": {
+        "value": null,
+        "unit": "PS",
+        "sourceType": "manufacturer",
+        "source": "",
+        "lastUpdated": "2026-10-03",
+        "confidence": "low"
+      },
+      "torque": {
+        "value": null,
+        "unit": "Nm",
+        "sourceType": "manufacturer",
+        "source": "",
+        "lastUpdated": "2026-10-03",
+        "confidence": "low"
+      },
+      "claimedMileage": {
+        "value": null,
+        "unit": "km/l",
+        "sourceType": "manufacturer",
+        "source": "",
+        "lastUpdated": "2026-10-03",
+        "confidence": "low"
+      },
+      "seating": {
+        "value": null,
+        "unit": "people",
+        "sourceType": "manufacturer",
+        "source": "",
+        "lastUpdated": "2026-10-03",
+        "confidence": "low"
+      },
+      "bootSpace": {
+        "value": null,
+        "unit": "L",
+        "sourceType": "manufacturer",
+        "source": "",
+        "lastUpdated": "2026-10-03",
+        "confidence": "low"
+      },
+      "groundClearance": {
+        "value": null,
+        "unit": "mm",
+        "sourceType": "manufacturer",
+        "source": "",
+        "lastUpdated": "2026-10-03",
+        "confidence": "low"
+      },
+      "dimensions": {
+        "length": {
+          "value": null,
+          "unit": "mm",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "width": {
+          "value": null,
+          "unit": "mm",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "height": {
+          "value": null,
+          "unit": "mm",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "turningRadius": {
+          "value": null,
+          "unit": "m",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        }
+      },
+      "realWorldMileage": {
+        "city": {
+          "value": null,
+          "unit": "km/l",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "highway": {
+          "value": null,
+          "unit": "km/l",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "mixed": {
+          "value": null,
+          "unit": "km/l",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "ownerRange": {
+          "value": null,
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        }
+      },
+      "safety": {
+        "ncap": {
+          "value": null,
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "adultProtection": {
+          "value": null,
+          "unit": "points",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "childProtection": {
+          "value": null,
+          "unit": "points",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "safetyAssist": {
+          "value": null,
+          "unit": "points",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "airbags": {
+          "value": null,
+          "unit": "count",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "adas": {
+          "value": null,
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "structure": {
+          "value": null,
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        }
+      },
+      "features": [
+        {
+          "name": "LED headlights",
+          "category": "Exterior",
+          "status": "unknown",
+          "availableFrom": "",
+          "evidence": {
+            "value": null,
+            "sourceType": "manufacturer",
+            "source": "",
+            "lastUpdated": "2026-10-03",
+            "confidence": "low"
+          }
+        }
+      ],
+      "ownership": {
+        "warranty": {
+          "value": null,
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "serviceInterval": {
+          "value": null,
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "annualMaintenance": {
+          "value": null,
+          "unit": "INR",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "annualInsurance": {
+          "value": null,
+          "unit": "INR",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "tyres": {
+          "value": null,
+          "unit": "INR",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "brakes": {
+          "value": null,
+          "unit": "INR",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "battery": {
+          "value": null,
+          "unit": "INR",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "reliability": {
+          "value": null,
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        }
+      },
+      "customerFeedback": {
+        "rating": {
+          "value": null,
+          "unit": "/5",
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "reviewCount": 0,
+        "summary": {
+          "value": null,
+          "sourceType": "demo",
+          "source": "",
+          "lastUpdated": "2026-10-03",
+          "confidence": "low"
+        },
+        "positiveThemes": [],
+        "concerns": []
+      },
+      "scores": {
+        "performance": {
+          "score": null,
+          "maxScore": 10,
+          "explanation": "Data unavailable. Add evidence before assigning a score.",
+          "positiveFactors": [],
+          "negativeFactors": [],
+          "sources": []
+        },
+        "comfort": {
+          "score": null,
+          "maxScore": 10,
+          "explanation": "Data unavailable. Add evidence before assigning a score.",
+          "positiveFactors": [],
+          "negativeFactors": [],
+          "sources": []
+        },
+        "safety": {
+          "score": null,
+          "maxScore": 10,
+          "explanation": "Data unavailable. Add evidence before assigning a score.",
+          "positiveFactors": [],
+          "negativeFactors": [],
+          "sources": []
+        },
+        "features": {
+          "score": null,
+          "maxScore": 10,
+          "explanation": "Data unavailable. Add evidence before assigning a score.",
+          "positiveFactors": [],
+          "negativeFactors": [],
+          "sources": []
+        },
+        "practicality": {
+          "score": null,
+          "maxScore": 10,
+          "explanation": "Data unavailable. Add evidence before assigning a score.",
+          "positiveFactors": [],
+          "negativeFactors": [],
+          "sources": []
+        },
+        "efficiency": {
+          "score": null,
+          "maxScore": 10,
+          "explanation": "Data unavailable. Add evidence before assigning a score.",
+          "positiveFactors": [],
+          "negativeFactors": [],
+          "sources": []
+        },
+        "ownership": {
+          "score": null,
+          "maxScore": 10,
+          "explanation": "Data unavailable. Add evidence before assigning a score.",
+          "positiveFactors": [],
+          "negativeFactors": [],
+          "sources": []
+        },
+        "customerFeedback": {
+          "score": null,
+          "maxScore": 10,
+          "explanation": "Data unavailable. Add evidence before assigning a score.",
+          "positiveFactors": [],
+          "negativeFactors": [],
+          "sources": []
+        },
+        "technology": {
+          "score": null,
+          "maxScore": 10,
+          "explanation": "Data unavailable. Add evidence before assigning a score.",
+          "positiveFactors": [],
+          "negativeFactors": [],
+          "sources": []
+        },
+        "value": {
+          "score": null,
+          "maxScore": 10,
+          "explanation": "Data unavailable. Add evidence before assigning a score.",
+          "positiveFactors": [],
+          "negativeFactors": [],
+          "sources": []
+        }
+      },
+      "images": []
+    }
+  ]
+}
