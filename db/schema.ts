@@ -1,3 +1,6 @@
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 export const catalogue=sqliteTable('catalogue',{id:text('id').primaryKey(),data:text('data_json').notNull(),published:integer('published').notNull().default(0),updatedAt:text('updated_at').notNull(),updatedBy:text('updated_by').notNull()});
 export const imageAssets=sqliteTable('image_assets',{id:text('id').primaryKey(),storageKey:text('storage_key').notNull(),filename:text('filename').notNull(),contentType:text('content_type').notNull(),size:integer('size').notNull(),uploadedAt:text('uploaded_at').notNull(),uploadedBy:text('uploaded_by').notNull()});
+
+export const adminAuth=sqliteTable('admin_auth',{id:text('id').primaryKey(),ownerId:text('owner_id').notNull(),secret:text('secret').notNull(),enabled:integer('enabled').notNull().default(0),pendingUntil:integer('pending_until').notNull(),lastCounter:integer('last_counter').notNull().default(-1),attempts:integer('attempts').notNull().default(0),attemptUntil:integer('attempt_until').notNull().default(0)});
+export const adminSessions=sqliteTable('admin_sessions',{tokenHash:text('token_hash').primaryKey(),ownerId:text('owner_id').notNull(),expiresAt:integer('expires_at').notNull()});
