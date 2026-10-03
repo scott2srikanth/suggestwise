@@ -4,4 +4,4 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
 const temp=await mkdtemp(join(tmpdir(),'carwise-tests-'));
-try{await build({entryPoints:['lib/car-import.ts','lib/ownership.ts','lib/totp.ts'],bundle:true,platform:'node',format:'cjs',outdir:temp,logLevel:'silent'});const result=spawnSync(process.execPath,['--test','tests/import-ownership.test.cjs','tests/totp.test.cjs'],{stdio:'inherit',env:{...process.env,CARWISE_CHECKS_DIR:temp}});process.exitCode=result.status??1;}finally{await rm(temp,{recursive:true,force:true})}
+try{await build({entryPoints:['lib/car-import.ts','lib/ownership.ts','lib/totp.ts','lib/decision-engine.ts'],bundle:true,platform:'node',format:'cjs',outdir:temp,logLevel:'silent'});const result=spawnSync(process.execPath,['--test','tests/import-ownership.test.cjs','tests/totp.test.cjs','tests/decision-engine.test.cjs'],{stdio:'inherit',env:{...process.env,CARWISE_CHECKS_DIR:temp}});process.exitCode=result.status??1;}finally{await rm(temp,{recursive:true,force:true})}
