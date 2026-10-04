@@ -4,3 +4,5 @@ export const imageAssets=sqliteTable('image_assets',{id:text('id').primaryKey(),
 
 export const adminAuth=sqliteTable('admin_auth',{id:text('id').primaryKey(),ownerId:text('owner_id').notNull(),secret:text('secret').notNull(),enabled:integer('enabled').notNull().default(0),pendingUntil:integer('pending_until').notNull(),lastCounter:integer('last_counter').notNull().default(-1),attempts:integer('attempts').notNull().default(0),attemptUntil:integer('attempt_until').notNull().default(0)});
 export const adminSessions=sqliteTable('admin_sessions',{tokenHash:text('token_hash').primaryKey(),ownerId:text('owner_id').notNull(),expiresAt:integer('expires_at').notNull()});
+
+export const speechTokenLimits=sqliteTable('speech_token_limits',{ownerId:text('owner_id').primaryKey(),window:integer('window').notNull(),count:integer('count').notNull()});
