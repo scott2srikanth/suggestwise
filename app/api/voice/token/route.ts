@@ -1,5 +1,0 @@
-import {requirePrivateOwner,apiError,ApiError} from '@/lib/admin-auth';
-import {voiceConfig,azureToken} from '@/lib/voice-server';
-import {database} from '@/lib/catalogue-server';
-import {MIRA_VOICE} from '@/lib/mira-speech';
-export async function POST(request:Request){try{const user=await requirePrivateOwner(request);const config=await voiceConfig();if(!config)throw new ApiError('Mira’s expressive voice needs connecting in Admin → Mira voice.',503);const window=Math.floor(Date.now()/3600000);const result=await database().prepare('INSERT INTO speech_token_limits(owner_id,window,count) VALUES(?,?,1) ON CONFLICT(owner_id) DO UPDATE SET window=excluded.window,count=CASE WHEN speech_token_limits.window=excluded.window THEN speech_token_limits.count+1 ELSE 1 END WHERE speech_token_limits.window<>excluded.window OR speech_token_limits.count<10').bind(user.userId,window).run();if(!result.meta.changes)throw new ApiError('Voice session limit reached. Try again next hour.',429);return Response.json({token:await azureToken(config),region:config.region,voice:MIRA_VOICE,expiresAt:Date.now()+480000},{headers:{'Cache-Control':'no-store'}})}catch(e){return apiError(e)}}
