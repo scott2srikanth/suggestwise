@@ -2,7 +2,7 @@ import type {Car} from './cars';
 import type {DecisionReport,Decision} from './decision-engine';
 export const guideTopics=['shortlist','why','tradeoffs','cost','safety','compare','comfort','efficiency','features'] as const;
 export type GuideTopic=typeof guideTopics[number];
-export type Narration={title:string;paragraphs:string[];carIds:string[];topic:GuideTopic;grounding:'decision-report';supported:boolean};
+export type Narration={title:string;paragraphs:string[];carIds:string[];topic:GuideTopic;grounding:'decision-report'|'scenario-report';supported:boolean};
 const rupees=(n:number)=>Math.round(n).toLocaleString('en-IN')+' rupees';
 const price=(n:number)=>n>=10000000?(n/10000000).toFixed(2)+' crore rupees':(n/100000).toFixed(2)+' lakh rupees';
 const name=(c:Car)=>`${c.brand} ${c.model} ${c.variant}`;

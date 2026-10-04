@@ -7,7 +7,7 @@ import {cars as demoCars,categories,total,money,cities,featureGroups,standard,ca
 
 import SuggestExplorer,{SuggestHome} from './suggest-explorer';
 const CarDetail=lazy(()=>import('./car-detail'));
-const DecisionEngine=lazy(()=>import('./decision-engine'));
+const DecisionEngine=lazy(()=>import('./mira-hub'));
 const Calculator=lazy(()=>import('./ownership-calculator'));
 import {toCarData,scoreKeys} from '@/lib/car-import';
 import {ownershipEstimate,calculateOwnership,ownershipDefaults} from '@/lib/ownership';
