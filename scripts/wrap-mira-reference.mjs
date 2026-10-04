@@ -15,7 +15,7 @@ const faceY=[[1.535,.489],[1.578,.398],[1.615,.35],[1.65,.286],[1.674,.247],[1.7
 function fy(y){for(let i=1;i<faceY.length;i++)if(y<=faceY[i][0]){const [a,u]=faceY[i-1],[b,v]=faceY[i];return u+(v-u)*clamp((y-a)/(b-a))}return .145}
 for(const node of doc.getRoot().listNodes().filter(n=>n.getMesh())){
  const material=node.getMesh().listPrimitives()[0].getMaterial(),name=material.getName();if(!name.includes('body')&&!name.includes('female_casualsuit'))continue;
- const body=name.includes('body'),size=1024,texture=material.getBaseColorTexture();
+ const body=name.includes('body'),size=2048,texture=material.getBaseColorTexture();
  const original=await sharp(texture.getImage()).resize(size,size).ensureAlpha().raw().toBuffer();const output=Buffer.from(original);
  // Make the neutral skin tone consistent with the photograph outside its front-facing projection.
  if(body)for(let i=0;i<output.length;i+=4){output[i]=Math.min(255,output[i]*1.02);output[i+1]*=.9;output[i+2]*=.82}
@@ -28,7 +28,17 @@ for(const node of doc.getRoot().listNodes().filter(n=>n.getMesh())){
  for(let t=0;t<indices.length;t+=3){const ids=[indices[t],indices[t+1],indices[t+2]],ps=ids.map(i=>points[i]);if(body&&Math.max(...ps.map(p=>p[1]))<1.525)continue;const uvs=ids.map(i=>uv.getElement(i,[]).map(v=>v*(size-1))),[a,b,c]=uvs,det=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1]);if(Math.abs(det)<.001)continue;
  const x0=Math.max(0,Math.floor(Math.min(a[0],b[0],c[0]))),x1=Math.min(size-1,Math.ceil(Math.max(a[0],b[0],c[0]))),y0=Math.max(0,Math.floor(Math.min(a[1],b[1],c[1]))),y1=Math.min(size-1,Math.ceil(Math.max(a[1],b[1],c[1])));
  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){const wa=((b[1]-c[1])*(x-c[0])+(c[0]-b[0])*(y-c[1]))/det,wb=((c[1]-a[1])*(x-c[0])+(a[0]-c[0])*(y-c[1]))/det,wc=1-wa-wb;if(wa<-.005||wb<-.005||wc<-.005)continue;const p=[0,1,2].map(k=>ps[0][k]*wa+ps[1][k]*wb+ps[2][k]*wc);let amount,source;
- if(body){amount=smooth(.06,.125,p[2])*smooth(1.525,1.55,p[1])*(1-smooth(1.71,1.74,p[1]))*(1-smooth(.068,.095,Math.abs(p[0])));source=photo(.505+p[0]*1.85,fy(p[1]));}
+ if(body){amount=smooth(.06,.125,p[2])*smooth(1.525,1.55,p[1])*(1-smooth(1.71,1.74,p[1]))*(1-smooth(.068,.095,Math.abs(p[0])));// Photo eyes/brows cannot be projected onto a rig with separate eyeballs and brow meshes.
+ // Retain the original eyelid skin around both orbits to avoid a second painted eye/brow.
+ const orbit=Math.sqrt(Math.pow((Math.abs(p[0])-.034)/.036,2)+Math.pow((p[1]-1.66)/.044,2));
+ amount*=smooth(.85,1.25,orbit);
+ // De-light the nose: its volume and nostril shadows are supplied by the geometry.
+ const nose=Math.exp(-Math.pow(p[0]/.022,4)-Math.pow((p[1]-1.615)/.027,4));amount*=1-nose;
+ // Level the reference's slight smile tilt before mapping it onto the symmetric lip rig.
+ const lip=Math.exp(-Math.pow((p[1]-1.578)/.018,4));
+ // Retain the rig's actual lip seam: a photographed closed smile would stay painted during visemes.
+ const mouth=Math.sqrt(Math.pow(p[0]/.05,2)+Math.pow((p[1]-1.578)/.024,2));amount*=smooth(.8,1.2,mouth);
+ source=photo(.505+p[0]*1.85,fy(p[1])-p[0]*.15*lip);}
  else{amount=smooth(.02,.10,p[2])*smooth(1.06,1.17,p[1]);source=photo(.5+p[0]*1.38,.58+(1.495-p[1])*1.08)}
  amount*=source[3]/255;const at=(y*size+x)*4;for(let k=0;k<3;k++)output[at+k]=output[at+k]*(1-amount)+source[k]*amount;
  }
