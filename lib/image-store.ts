@@ -1,0 +1,6 @@
+import {database} from './catalogue-server';
+import {contentHash} from './suggest-store-schema';
+export const imageLimit=1_000_000;
+export function imageType(b:Uint8Array){if(b[0]===255&&b[1]===216&&b[2]===255)return 'image/jpeg';if(Array.from(b.slice(0,8)).join(',')==='137,80,78,71,13,10,26,10')return 'image/png';if(String.fromCharCode(...b.slice(0,4))==='RIFF'&&String.fromCharCode(...b.slice(8,12))==='WEBP')return 'image/webp';throw new Error('Use a valid JPEG, PNG or WebP image.')}
+export async function imageStatement(key:string,bytes:Uint8Array<ArrayBuffer>,type:string){if(!bytes.length||bytes.length>imageLimit)throw new Error('Optimized images must be at most 1 MB.');return database().prepare('INSERT INTO image_blobs(key,bytes,content_type,hash,size) VALUES(?,?,?,?,?) ON CONFLICT(key) DO NOTHING').bind(key,bytes.buffer,type,await contentHash(bytes),bytes.length)}
+export async function getImage(key:string){const row=await database().prepare('SELECT bytes,content_type,hash,size FROM image_blobs WHERE key=?').bind(key).first<{bytes:number[]|ArrayBuffer|Uint8Array;content_type:string;hash:string;size:number}>();if(!row)return null;const bytes=row.bytes instanceof ArrayBuffer?new Uint8Array(row.bytes):new Uint8Array(row.bytes);return {...row,bytes};}

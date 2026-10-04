@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { blob, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 export const catalogue=sqliteTable('catalogue',{id:text('id').primaryKey(),data:text('data_json').notNull(),published:integer('published').notNull().default(0),updatedAt:text('updated_at').notNull(),updatedBy:text('updated_by').notNull()});
 export const imageAssets=sqliteTable('image_assets',{id:text('id').primaryKey(),storageKey:text('storage_key').notNull(),filename:text('filename').notNull(),contentType:text('content_type').notNull(),size:integer('size').notNull(),uploadedAt:text('uploaded_at').notNull(),uploadedBy:text('uploaded_by').notNull(),hash:text('content_hash').unique(),variants:text('variants_json').notNull().default('{}')});
 
@@ -11,3 +11,5 @@ export const storeRecords=sqliteTable('store_records',{id:text('id').primaryKey(
 export const storeRevisions=sqliteTable('store_revisions',{id:text('id').primaryKey(),recordId:text('record_id').notNull(),revision:integer('revision').notNull(),data:text('data_json').notNull(),updatedAt:text('updated_at').notNull(),updatedBy:text('updated_by').notNull()});
 export const storeReleases=sqliteTable('store_releases',{id:text('id').primaryKey(),parent:text('parent_id'),data:text('data_json').notNull(),hash:text('content_hash').notNull(),createdAt:text('created_at').notNull(),createdBy:text('created_by').notNull(),reason:text('reason').notNull()});
 export const storeHead=sqliteTable('store_head',{id:text('id').primaryKey(),releaseId:text('release_id').notNull()});
+
+export const imageBlobs=sqliteTable('image_blobs',{key:text('key').primaryKey(),bytes:blob('bytes',{mode:'buffer'}).notNull(),contentType:text('content_type').notNull(),hash:text('hash').notNull(),size:integer('size').notNull()});
