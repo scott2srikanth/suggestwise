@@ -10,9 +10,10 @@ import {deliveryFor,normalizeSpeech,type MiraEmotion,type VisemeCue} from '@/lib
 import MiraAvatar from './mira-avatar';
 import type {SpeechEnergy} from '@/lib/mira-motion';
 import type {LocalVoice,LocalClip} from '@/lib/local-voice';
+const EMPTY_CARS:Car[]=[];
 const carTopics:{id:GuideTopic;label:string}[]=[{id:'shortlist',label:'My shortlist'},{id:'why',label:'Why this car?'},{id:'tradeoffs',label:'Trade-offs'},{id:'cost',label:'Running costs'},{id:'safety',label:'Safety evidence'},{id:'compare',label:'Compare first two'},{id:'comfort',label:'Comfort & space'},{id:'efficiency',label:'Mileage evidence'},{id:'features',label:'Features & tech'}];
 export type GuideScenario={label:string;options:{id:string;name:string}[];topics:{id:GuideTopic;label:string}[];narrate:(topic:GuideTopic,id?:string,question?:string)=>Narration;onInspect:(id:string)=>void};
-export default function TalkingGuide({report,cars=[],onOpen,children,scenario}:{report?:DecisionReport;cars?:Car[];onOpen?:(car:Car)=>void;children?:ReactNode;scenario?:GuideScenario}){
+export default function TalkingGuide({report,cars=EMPTY_CARS,onOpen,children,scenario}:{report?:DecisionReport;cars?:Car[];onOpen?:(car:Car)=>void;children?:ReactNode;scenario?:GuideScenario}){
 const topics=scenario?.topics||carTopics;
 
 const [topic,setTopic]=useState<GuideTopic>('shortlist'),[selected,setSelected]=useState(''),[question,setQuestion]=useState(''),[asked,setAsked]=useState(''),[emotion,setEmotion]=useState<MiraEmotion>('auto'),[state,setState]=useState<'idle'|'starting'|'speaking'|'paused'>('idle'),[error,setError]=useState(''),[rate,setRate]=useState(1),[motion,setMotion]=useState(true),[progress,setProgress]=useState(''),[activeChunk,setActiveChunk]=useState(-1),[follow,setFollow]=useState(true),[readyCount,setReadyCount]=useState(0),[questionRevision,setQuestionRevision]=useState(0);
