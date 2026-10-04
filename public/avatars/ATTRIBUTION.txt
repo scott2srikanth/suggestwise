@@ -1,0 +1,6 @@
+Mira rig uses the MPFB avatar supplied by Mika Suominen / met4citizen TalkingHead.
+Source: https://github.com/met4citizen/TalkingHead/blob/main/avatars/mpfb.glb
+Licence: CC0 (public domain dedication), as stated in TalkingHead README asset licences.
+https://creativecommons.org/publicdomain/zero/1.0/
+CARWISE customizes wardrobe/lighting, framing, motion, facial coarticulation and gesture choreography.
+Optimized using glTF-Transform / Meshoptimizer. Original geometry and rig retained.
