@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useRef,useState} from 'react';
 import type {VisemeCue,MiraEmotion} from '@/lib/mira-speech';
-import {blinkAt,presenterChoreography,facialPerformance,expressionFor,energyAt,solveArm,smoothValue,speechWeights,type SpeechEnergy,type Point3,type PresenterPose} from '@/lib/mira-motion';
+import {blinkAt,presenterChoreography,facialPerformance,expressionFor,energyAt,solveArm,smoothValue,speechWeights,mouthMuscles,type SpeechEnergy,type Point3,type PresenterPose} from '@/lib/mira-motion';
 export type MiraPlayback={audio:HTMLAudioElement|null;cues:VisemeCue[];energy?:SpeechEnergy;elapsed:number};
 export default function MiraAvatar({playback,motion,topic,emotion}:{playback:()=>MiraPlayback;motion:boolean;topic:string;emotion:MiraEmotion}){
 const container=useRef<HTMLDivElement>(null),latest=useRef({playback,motion,topic,emotion});latest.current={playback,motion,topic,emotion};const [status,setStatus]=useState<'loading'|'ready'|'fallback'>('loading');
@@ -15,6 +15,8 @@ function cleanup(){cancelAnimationFrame(loop);observer.disconnect();if(model)mod
 dispose=cleanup;
 const gltf=await loader.loadAsync('/avatars/mira-reference-3d.glb?v=uv-soft-seams-20261004');if(cancelled){model=gltf.scene;cleanup();return}model=gltf.scene;scene.add(model);
 const bones=new Map<string,import('three').Object3D>(),base=new Map<string,import('three').Euler>(),morphs:import('three').Mesh[]=[];model.traverse(object=>{const name=object.name.replace(/^mixamorig:?/,'');if((object as import('three').Bone).isBone){bones.set(name,object);base.set(name,object.rotation.clone())}const mesh=object as import('three').Mesh;if(mesh.isMesh){mesh.frustumCulled=false;if(mesh.morphTargetDictionary&&mesh.morphTargetInfluences)morphs.push(mesh);for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material]){const m=material as import('three').MeshStandardMaterial;if(m.name.includes('female_casualsuit')){m.color.set('#ffffff');m.roughness=.78}if(m.name.includes('ponytail'))m.color.set('#292d38');if(m.name.includes('body')){m.color.set('#ffffff');m.roughness=.9;m.normalScale?.set(.06,.06)}if(m.name.includes('eyelashes')||m.name.includes('eyebrows')){m.side=THREE.DoubleSide;m.alphaTest=.02;m.alphaToCoverage=true}}}});
+// A recessed mouth cavity stays behind the lips and follows the head; the rig supplies real teeth/tongue.
+const head=bones.get('Head');if(head){model.updateMatrixWorld(true);const cavity=new THREE.Mesh(new THREE.SphereGeometry(1,24,16),new THREE.MeshStandardMaterial({color:'#241018',roughness:1}));cavity.scale.set(.031,.022,.022);cavity.position.copy(head.worldToLocal(new THREE.Vector3(0,1.578,.105)));head.getWorldQuaternion(cavity.quaternion);cavity.quaternion.invert();head.add(cavity)}
 bones.get('Head')?.scale.setScalar(1.2);
 // A readable name badge follows the existing chest bone, including torso gestures.
 const badgeCanvas=document.createElement('canvas');badgeCanvas.width=512;badgeCanvas.height=160;
@@ -77,8 +79,9 @@ function render(now:number){
  targets.eyeSquintLeft=targets.eyeSquintRight=expression.cheek*.3;
  targets.eyeWideLeft=targets.eyeWideRight=speaking?.055+(moving?face.wide:0):0;
  const gaze=moving?face.gaze:0;targets.eyeLookOutLeft=Math.max(0,gaze);targets.eyeLookInRight=Math.max(0,gaze);targets.eyeLookInLeft=Math.max(0,-gaze);targets.eyeLookOutRight=Math.max(0,-gaze);
- targets.jawOpen=speaking&&!cues.length?amplitude*.22:0;
- for(const name of morphNames)smooth[name]=smoothValue(smooth[name]||0,targets[name]||0,dt,name.startsWith('eyeBlink')?42:name.startsWith('viseme_')?36:9);
+ Object.assign(targets,speaking?mouthMuscles(targets,amplitude):{});
+ if(speaking&&!cues.length)targets.jawOpen=amplitude*.25;
+ for(const name of morphNames)smooth[name]=smoothValue(smooth[name]||0,targets[name]||0,dt,name.startsWith('eyeBlink')?42:name.startsWith('viseme_')||name.startsWith('mouth')||name==='jawOpen'||name==='tongueOut'?32:9);
  for(const mesh of morphs)for(const [name,index] of Object.entries(mesh.morphTargetDictionary!))mesh.morphTargetInfluences![index]=smooth[name];
  const planned=presenterChoreography(speechTime,latest.current.topic),blend={} as Record<PresenterPose,number>;
  for(const kind of poseNames){const target=moving&&speaking?planned[kind]:kind==='gather'?1:0;blend[kind]=smoothValue(smooth['pose_'+kind]??(kind==='gather'?1:0),target,dt,5);smooth['pose_'+kind]=blend[kind]}
@@ -89,7 +92,7 @@ function render(now:number){
  hand('Left',blend,speechTime);hand('Right',blend,speechTime);
  model!.position.y=breathing*.15;renderer.render(scene,camera);
  // DOM diagnostics describe visible motion for preview verification; no customer data is exposed.
- host.dataset.speaking=String(speaking);host.dataset.gesture=(1-blend.gather).toFixed(2);host.dataset.articulation=articulation.toFixed(2);
+ host.dataset.speaking=String(speaking);host.dataset.gesture=(1-blend.gather).toFixed(2);host.dataset.articulation=articulation.toFixed(2);host.dataset.jaw=(smooth.jawOpen||0).toFixed(2);
  loop=requestAnimationFrame(render);
 }
 setStatus('ready');loop=requestAnimationFrame(render);

@@ -18,7 +18,21 @@ export function speechWeights(cues:VisemeCue[],time:number,energy=1){
   const amplitude=kind==='PP'?1:.3+.7*Math.min(1,Math.max(0,energy));
   weights['viseme_'+kind]=Math.max(weights['viseme_'+kind]||0,Math.max(0,Math.min(attack,release))*.9*amplitude);
  }
- const total=Object.values(weights).reduce((sum,value)=>sum+value,0);if(total>.95)for(const name of Object.keys(weights))weights[name]*=.95/total;return weights;
+ const total=Object.values(weights).reduce((sum,value)=>sum+value,0);if(total>.95)for(const name of Object.keys(weights))weights[name]*=.95/total;
+ return weights;
+}
+/** Secondary mouth muscles support the rig's visemes; teeth/tongue share the same jaw target. */
+export function mouthMuscles(weights:Record<string,number>,energy:number){
+ const v=(name:string)=>weights['viseme_'+name]||0;
+ const closure=v('PP'),opening=v('aa')*.46+v('E')*.23+v('I')*.13+v('O')*.34+v('U')*.2+v('TH')*.16+v('DD')*.14+v('kk')*.2+v('nn')*.1+v('RR')*.16+v('CH')*.12+v('FF')*.06;
+ const silence=Math.max(0,Math.min(1,energy/.065));
+ return {jawOpen:Math.min(.42,opening)*(1-closure)*silence,
+ mouthClose:closure*.6,mouthPressLeft:closure*.09,mouthPressRight:closure*.09,
+ mouthFunnel:(v('O')*.18+v('U')*.22)*silence,mouthPucker:v('U')*.18*silence,
+ mouthStretchLeft:(v('E')+v('I'))*.08*silence,mouthStretchRight:(v('E')+v('I'))*.08*silence,
+ mouthLowerDownLeft:v('aa')*.065*silence,mouthLowerDownRight:v('aa')*.065*silence,
+ tongueOut:v('TH')*.09*silence};
+
 }
 export function blinkAt(time:number){const cycle=Math.floor((time+1.15)/4.8),phase=(time+1.15)%4.8;const double=cycle%3===2;const t=phase<.2?phase:double&&phase>.34&&phase<.52?(phase-.34)*.2/.18:-1;return t>=0?Math.sin(Math.PI*t/.2)**2:0}
 export function gestureAt(time:number,enabled:boolean){if(!enabled)return 0;const cycle=(time+.15)%7.2;if(cycle<.6||cycle>3.9)return 0;const up=Math.min(1,(cycle-.6)/.85),down=Math.min(1,(3.9-cycle)/1.15),t=Math.min(up,down);return t*t*(3-2*t)}

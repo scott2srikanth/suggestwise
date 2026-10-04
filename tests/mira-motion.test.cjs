@@ -1,4 +1,4 @@
-const {test}=require('node:test');const assert=require('node:assert/strict');const path=require('node:path');const {smoothValue,speechWeights,blinkAt,gestureAt,gesturePlan,expressionFor,speechEnergy,energyAt,solveArm,presenterChoreography,facialPerformance}=require(path.join(process.env.CARWISE_CHECKS_DIR,'mira-motion.js'));
+const {test}=require('node:test');const assert=require('node:assert/strict');const path=require('node:path');const {smoothValue,speechWeights,mouthMuscles,blinkAt,gestureAt,gesturePlan,expressionFor,speechEnergy,energyAt,solveArm,presenterChoreography,facialPerformance}=require(path.join(process.env.CARWISE_CHECKS_DIR,'mira-motion.js'));
 test('facial targets anticipate phonemes, crossfade and close through silence',()=>{const cues=[{seconds:.2,duration:.12,frame:1,viseme:'aa'},{seconds:.32,duration:.15,frame:3,viseme:'O'}];assert.equal(Object.keys(speechWeights(cues,0)).length,0);const mixed=speechWeights(cues,.31);assert.ok(mixed.viseme_aa>0&&mixed.viseme_O>0);assert.equal(Object.keys(speechWeights(cues,.7)).length,0);for(const value of Object.values(mixed))assert.ok(value>=0&&value<=.9)});
 test('motion smoothing avoids overshoot after long inactive frames',()=>{const value=smoothValue(.2,1,9);assert.ok(value>.2&&value<1);assert.equal(smoothValue(.2,1,0),.2);assert.ok(smoothValue(.8,0,.016)<.8)});
 test('blink and gestures are bounded, spaced and disabled with reduced motion',()=>{for(let t=0;t<30;t+=.03){assert.ok(blinkAt(t)>=0&&blinkAt(t)<=1);assert.ok(gestureAt(t,true)>=0&&gestureAt(t,true)<=1);assert.equal(gestureAt(t,false),0)}assert.equal(gestureAt(0,true),0);assert.equal(gestureAt(5,true),0)});
@@ -25,3 +25,11 @@ test('reference choreography blends without jumps, holds open palms and only wel
 });
 
 test('expressive facial accents remain bounded and speech emphasis settles in silence',()=>{for(let t=0;t<30;t+=.03){const f=facialPerformance(t,1,true);assert.ok(Math.abs(f.nod)<=.065001);assert.ok(Math.abs(f.tilt)<=.036001);assert.ok(Math.abs(f.gaze)<=.080001);assert.ok(f.brow>=0&&f.brow<=.105001)}const idle=facialPerformance(2,1,false);assert.equal(idle.nod,0);assert.equal(idle.brow,0);assert.equal(idle.wide,0)});
+
+test('vowels open the jaw, bilabials close it, and tongue motion stops in silence',()=>{
+ const vowel=mouthMuscles({viseme_aa:.9},1),closed=mouthMuscles({viseme_PP:.9},1);
+ assert.ok(vowel.jawOpen>.3&&vowel.jawOpen<=.42);assert.equal(closed.jawOpen,0);assert.ok(closed.mouthClose>.5);
+ assert.ok(mouthMuscles({viseme_TH:.9},1).tongueOut>0);
+ const quiet=mouthMuscles({viseme_aa:.9,viseme_TH:.1},0);assert.equal(quiet.jawOpen,0);assert.equal(quiet.tongueOut,0);
+ assert.ok(mouthMuscles({viseme_U:.9},1).mouthPucker>0);assert.equal(mouthMuscles({},1).jawOpen,0);
+});
