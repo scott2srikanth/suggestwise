@@ -68,7 +68,7 @@ Local vendor assets are copied by `scripts/prepare-local-voice.mjs`; dependencie
 
 The earlier generated portrait remains a labelled fallback when WebGL is unavailable; raster mouth-pose switching is no longer used.
 
-Validation: 32 automated checks pass; TypeScript and production build checked. Browser preview verified a real q8 model download (92 MB), actual neural audio playback, phoneme-driven avatar pose changes, pause closing lips, resume restoring movement, and transcript fallback. Additional checks verify anatomically bounded hand reach, expressive delivery and audio-energy-based lip articulation. Voice naturalness is subjective; no dedicated emotional fine-tuning or Indian accent is claimed.
+Validation: 33 automated checks pass; TypeScript and production build checked. Browser preview verified a real q8 model download (92 MB), actual neural audio playback, phoneme-driven avatar pose changes, pause closing lips, resume restoring movement, and transcript fallback. Additional checks verify anatomically bounded hand reach, expressive delivery and audio-energy-based lip articulation. Voice naturalness is subjective; no dedicated emotional fine-tuning or Indian accent is claimed.
 
 
 ### Mira professional 3D motion
@@ -85,3 +85,5 @@ Authored 13.6-second anticipation/hold/settle phases move between a welcome pose
 
 ### Stationary presenter workspace
 The Mira module has a bounded viewport-height shell. Only its labelled, keyboard-focusable right conversation panel scrolls; the character canvas remains outside that scroll container. The transcript no longer creates a second scroll surface. The panel groups topic navigation, settings, playback and the explanation, with optional voice/privacy details. Preferences and ranked results also live in this same scroll surface; sticky section buttons jump between Conversation, Preferences and Results. The Decision Engine route uses a viewport shell with no page scrollbar; its footer is omitted on this working surface. Short landscape layouts release the sticky panel heading so controls stay reachable. On mobile, the presenter occupies a fixed top row and the conversation scrolls underneath. Speech-energy accents drive bounded nods, brow lifts, eye widening, gaze shifts and slight wrist beats; reduced motion disables those accents.
+
+Mira playback lives in the fixed presenter panel. The local voice queue prepares two segments before starting and generates ahead during playback. Follow Mira scrolls only the conversation panel to the active spoken segment; it can be disabled. Questions route to grounded decision-report explanations for comfort, efficiency, features, safety, costs, fit and comparisons. This is a local rules-based decision assistant, not a newly trained general-purpose language model.

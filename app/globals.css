@@ -57,3 +57,18 @@ html:has(.decision-page){overflow:hidden}
 .guide-workspace{scroll-padding-top:190px}
 @media(max-height:520px){.decision-page{padding-top:10px}.decision-page>.section-top .eyebrow,.decision-page>.section-top p{display:none}.decision-page>.section-top h1{font-size:20px}.decision-page .talking-guide{margin-top:10px}.guide-heading{position:relative}.guide-workspace{scroll-padding-top:16px}.mira-stage-caption{padding:10px}.mira-stage-caption>small{font-size:12px}.mira-canvas{bottom:65px}}
 @media(max-height:520px) and (max-width:760px){.decision-page .talking-guide{grid-template-rows:110px minmax(0,1fr)}.mira-stage-caption{top:15px}.mira-canvas{inset:0 43% 0 0}.mira-motion-control{min-height:30px;padding:6px}}
+
+/* Mira owns playback; the conversation follows local speech without moving the presenter. */
+.mira-presenter{position:relative;display:flex;flex:1;flex-direction:column;min-height:0;width:100%;overflow:hidden}
+.guide-character .guide-playback{flex:none;display:flex;justify-content:center;flex-wrap:wrap;gap:8px;width:100%;margin:0;padding:18px 16px;background:#fff;border-top:1px solid #dce5ef;border-bottom:0;z-index:2}
+.guide-character .guide-playback .primary{flex:1 1 100%;justify-content:center}
+.guide-character .guide-speed{width:100%;max-width:none;margin:6px 0 0;display:grid;grid-template-columns:95px 1fr;align-items:center;gap:12px;font-size:13px}
+.mira-buffer{width:100%;text-align:center;font-size:12px;color:#53647b;line-height:1.5;overflow-wrap:anywhere}
+.guide-panel-nav{flex-wrap:wrap}.guide-panel-nav .follow-active{background:#e5efff;border-color:#aac5fa;color:#174ca2}
+.guide-spoken-part{padding:14px 16px;margin:12px 0;border:1px solid #e1e7ef;border-left:3px solid transparent;background:white;border-radius:5px;transition:background .2s,border-color .2s}
+.guide-transcript .guide-spoken-part.reading{border-left-color:#2865dc;background:#eaf2ff;border-radius:5px}
+.guide-part-number{font-size:12px;font-weight:650;letter-spacing:.7px;color:#526983}.guide-spoken-part.reading .guide-part-number{color:#2156ba}.guide-spoken-part p{margin:7px 0 0;font-size:16px;line-height:1.75}
+@media(max-width:760px){.decision-page .talking-guide{grid-template-rows:minmax(235px,40%) minmax(0,1fr)}.guide-character.professional{flex-direction:row;align-items:stretch}.mira-presenter{width:48%;flex:1}.mira-stage-caption{display:none}.mira-canvas{inset:0 0 35px}.mira-stage-light{inset:0}.guide-character .guide-playback{width:52%;max-width:220px;padding:12px;align-content:center;border-top:0;border-left:1px solid #dce5ef}.guide-character .guide-playback .primary,.guide-character .guide-playback .secondary{padding:9px;font-size:13px;min-height:36px}.guide-character .guide-speed{grid-template-columns:1fr;font-size:12px;gap:8px}.mira-motion-control{font-size:11px}.guide-workspace .guide-heading h2{font-size:18px}.guide-heading p{display:none}.guide-spoken-part{padding:12px}.guide-panel-nav button{font-size:12px}}
+@media(max-height:520px){.guide-character .guide-playback{padding:8px}.guide-character .guide-speed,.mira-buffer{display:none}.decision-page .talking-guide{grid-template-rows:minmax(145px,45%) minmax(0,1fr)}}
+.mira-presenter .mira-stage-caption{position:absolute;top:12px;left:14px;right:auto;bottom:auto;padding:0;border:0;background:transparent;text-align:left;pointer-events:none;z-index:1}.mira-presenter .mira-stage-caption>span{font-size:16px;letter-spacing:2px}.mira-presenter .mira-stage-caption>small{font-size:12px;margin-top:4px}.mira-presenter .mira-canvas{top:0;bottom:36px}.mira-presenter .mira-motion-control{bottom:0}.guide-character .guide-playback{padding:12px}.guide-character .guide-playback .primary{min-height:40px}
+@media(max-width:760px){.mira-presenter .mira-stage-caption{display:none}}
