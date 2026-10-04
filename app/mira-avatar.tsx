@@ -1,13 +1,13 @@
 'use client';
 import {useEffect,useRef,useState} from 'react';
 import type {VisemeCue,MiraEmotion} from '@/lib/mira-speech';
-import {blinkAt,presenterChoreography,expressionFor,energyAt,solveArm,smoothValue,speechWeights,type SpeechEnergy,type Point3,type PresenterPose} from '@/lib/mira-motion';
+import {blinkAt,presenterChoreography,facialPerformance,expressionFor,energyAt,solveArm,smoothValue,speechWeights,type SpeechEnergy,type Point3,type PresenterPose} from '@/lib/mira-motion';
 export type MiraPlayback={audio:HTMLAudioElement|null;cues:VisemeCue[];energy?:SpeechEnergy;elapsed:number};
 export default function MiraAvatar({playback,motion,topic,emotion}:{playback:()=>MiraPlayback;motion:boolean;topic:string;emotion:MiraEmotion}){
 const container=useRef<HTMLDivElement>(null),latest=useRef({playback,motion,topic,emotion});latest.current={playback,motion,topic,emotion};const [status,setStatus]=useState<'loading'|'ready'|'fallback'>('loading');
 useEffect(()=>{let cancelled=false,dispose=()=>{};async function initialize(){try{
 const THREE=await import('three');const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js');const {MeshoptDecoder}=await import('three/addons/libs/meshopt_decoder.module.js');if(cancelled||!container.current)return;
-const host=container.current,scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(34.5,1,.1,20);camera.position.set(0,1.46,2.05);camera.lookAt(0,1.405,0);
+const host=container.current,scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(28.5,1,.1,20);camera.position.set(0,1.46,2.05);camera.lookAt(0,1.405,0);
 const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));renderer.setClearColor(0x000000,0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;host.appendChild(renderer.domElement);renderer.domElement.setAttribute('aria-hidden','true');
 scene.add(new THREE.HemisphereLight(0xffffff,0x7785a3,2.2));const key=new THREE.DirectionalLight(0xffeee0,2.6);key.position.set(2,3,4);scene.add(key);const fill=new THREE.DirectionalLight(0xd9e9ff,1.4);fill.position.set(-3,1.8,2);scene.add(fill);const rim=new THREE.DirectionalLight(0x94baff,2);rim.position.set(1,2,-3);scene.add(rim);
 const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);let model:import('three').Group|undefined;let loop=0;const observer=new ResizeObserver(()=>resize());function resize(){const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}observer.observe(host);resize();
@@ -31,7 +31,7 @@ function hand(side:'Left'|'Right',blend:Record<PresenterPose,number>,time:number
  const upper=bones.get(side+'Arm'),lower=bones.get(side+'ForeArm'),wrist=bones.get(side+'Hand');if(!upper||!lower||!wrist)return;
  const sign=side==='Left'?1:-1,own=side==='Left'?'left':'right',other=side==='Left'?'right':'left',careful=['safety','tradeoffs'].includes(latest.current.topic);
  const horizontalSpace=Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*(camera.position.z-.32)*camera.aspect;
- const openX=Math.max(.14,Math.min(careful?.205:.24,horizontalSpace-.18)),beat=Math.sin(time*2.15)*.006*(blend.open+blend[own]);
+ const openX=Math.max(.14,Math.min(careful?.205:.24,horizontalSpace-.18)),beat=(Math.sin(time*2.15)*.011+Math.sin(time*3.7)*.004)*(blend.open+blend[own]);
  const points:Record<PresenterPose,Point3>={gather:[sign*.061,1.205,side==='Left'?.305:.285],welcome:[sign*.048,1.285,.305],open:[sign*openX,1.26+beat,.31],left:side==='Left'?[.235,1.285+beat,.32]:[-.11,1.19,.29],right:side==='Right'?[-.235,1.285+beat,.32]:[.11,1.19,.29]};
  const target=new THREE.Vector3();for(const kind of poseNames)target.addScaledVector(new THREE.Vector3(...points[kind]),blend[kind]);
  pose(side+'Arm');pose(side+'ForeArm');pose(side+'Hand');model!.updateMatrixWorld(true);
@@ -60,24 +60,28 @@ function render(now:number){
  const utterance=speaking?audio.currentTime:0,speechTime=elapsed+utterance,moving=latest.current.motion&&!document.hidden;
  const amplitude=speaking?energyAt(energy,utterance):0,targets=speaking?speechWeights(cues,utterance,amplitude):{};
  const expression=expressionFor(latest.current.topic,latest.current.emotion,speaking,speechTime);
+ smooth.energy=smoothValue(smooth.energy||0,amplitude,dt,8);
+ const face=facialPerformance(speechTime,smooth.energy,speaking);
  const articulation=Math.min(1,Object.values(targets).reduce((sum,value)=>sum+value,0));
  // Keep expressions away from the mouth's speech shapes; eyes/brows carry most of the emotion.
  targets.eyeBlinkLeft=targets.eyeBlinkRight=moving?blinkAt(alive):0;
  targets.mouthSmileLeft=targets.mouthSmileRight=expression.smile*(1-articulation*.8);
- targets.cheekSquintLeft=targets.cheekSquintRight=expression.cheek;
- targets.browInnerUp=expression.browInner;
- targets.browOuterUpLeft=targets.browOuterUpRight=expression.browOuter;
+ targets.cheekSquintLeft=targets.cheekSquintRight=expression.cheek+(moving?face.cheek:0);
+ targets.browInnerUp=expression.browInner+(moving?face.brow*.55:0);
+ targets.browOuterUpLeft=expression.browOuter+(moving?face.brow:0);
+ targets.browOuterUpRight=expression.browOuter+(moving?face.brow*.82:0);
  targets.eyeSquintLeft=targets.eyeSquintRight=expression.cheek*.3;
- targets.eyeWideLeft=targets.eyeWideRight=speaking?.055:0;
+ targets.eyeWideLeft=targets.eyeWideRight=speaking?.055+(moving?face.wide:0):0;
+ const gaze=moving?face.gaze:0;targets.eyeLookOutLeft=Math.max(0,gaze);targets.eyeLookInRight=Math.max(0,gaze);targets.eyeLookInLeft=Math.max(0,-gaze);targets.eyeLookOutRight=Math.max(0,-gaze);
  targets.jawOpen=speaking&&!cues.length?amplitude*.22:0;
  for(const name of morphNames)smooth[name]=smoothValue(smooth[name]||0,targets[name]||0,dt,name.startsWith('eyeBlink')?42:name.startsWith('viseme_')?36:9);
  for(const mesh of morphs)for(const [name,index] of Object.entries(mesh.morphTargetDictionary!))mesh.morphTargetInfluences![index]=smooth[name];
  const planned=presenterChoreography(speechTime,latest.current.topic),blend={} as Record<PresenterPose,number>;
  for(const kind of poseNames){const target=moving&&speaking?planned[kind]:kind==='gather'?1:0;blend[kind]=smoothValue(smooth['pose_'+kind]??(kind==='gather'?1:0),target,dt,5);smooth['pose_'+kind]=blend[kind]}
- const breathing=moving?Math.sin(alive*1.5)*.005:0,accent=moving&&speaking?Math.sin(speechTime*1.45)*.015:0;
- const tilt=moving?(blend.welcome*.025+Math.sin(alive*.32)*.01):0;
- pose('Head',accent,moving?Math.sin(alive*.43)*.017:0,tilt);
- pose('Neck',breathing*.5);pose('Spine2',breathing,0,(blend.right-blend.left)*.018);
+ const breathing=moving?Math.sin(alive*1.5)*.005:0,accent=moving?face.nod:0;
+ const tilt=moving?(blend.welcome*.04+face.tilt):0;
+ pose('Head',accent,moving?face.yaw:0,tilt);
+ pose('Neck',breathing*.5+accent*.18,0,tilt*.15);pose('Spine2',breathing,0,(blend.right-blend.left)*.018);
  hand('Left',blend,speechTime);hand('Right',blend,speechTime);
  model!.position.y=breathing*.15;renderer.render(scene,camera);
  // DOM diagnostics describe visible motion for preview verification; no customer data is exposed.

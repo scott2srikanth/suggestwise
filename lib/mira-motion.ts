@@ -55,3 +55,10 @@ export function presenterChoreography(time:number,topic:string):PoseBlend{
  const t=Math.max(0,Math.min(1,(phase-keys[i][0])/(keys[i+1][0]-keys[i][0]))),ease=t*t*t*(t*(t*6-15)+10);
  const pose:PoseBlend={gather:0,welcome:0,open:0,left:0,right:0};pose[keys[i][1]]+=1-ease;pose[keys[i+1][1]]+=ease;return pose;
 }
+
+/** Bounded expressive accents; speech energy drives emphasis, never mouth timing. */
+export function facialPerformance(time:number,amplitude:number,speaking:boolean){
+ const energy=speaking?Math.max(0,Math.min(1,amplitude)):0;
+ const phrase=.5+.5*Math.sin(time*.91+.35),accent=energy*phrase;
+ return {nod:speaking?Math.sin(time*2.05)*(.018+accent*.047):0,tilt:Math.sin(time*.68)*.024+accent*.012,yaw:Math.sin(time*.47)*.027,gaze:Math.sin(time*.73)*.08,brow:accent*.105,wide:energy*.085,cheek:accent*.055};
+}
