@@ -94,3 +94,15 @@ Mira supports all four decision categories through the reusable TalkingGuide sce
 
 
 Mira’s active presenter is the original skeletal 3D rig with reference-photo textures baked into its existing skin and outfit UVs. Run `node scripts/wrap-mira-reference.mjs` to rebuild from the preserved `mira-presenter.glb` and supplied portrait. Facial morph targets and skeletal gestures remain intact; a single photo cannot replace the existing facial geometry or hairstyle.
+
+## SuggestStore
+
+Shared D1 records and R2 images now sit behind a versioned publishing workspace at **Admin → SuggestStore**. The original car and category demo catalogues and legacy imports remain readable without destructive backfills. Edits go to `store_records` and an immutable revision log; publication freezes included records in `store_releases` and switches `store_head` using an expected-version check. A rollback publishes an earlier snapshot as a new release without overwriting drafts. Before the first release, visitors continue reading the legacy catalogue, not new workspace edits.
+
+`/api/store` supports ETags and record deltas against a saved release. IndexedDB is a disposable visitor cache; failed refreshes explicitly show the last cached catalogue. Cars, category explorers and Mira consume the same publication layer. Existing site audience and Google Authenticator admin controls are preserved.
+
+Images are SHA-256 addressed in R2 with database metadata and optional browser-generated thumbnail/card/detail WebP variants. Original bytes remain intact; old image IDs/URLs continue to work. Server validation checks file signatures and size limits. JSON imports require category schemas and evidence for sourced profiles; platform scores do not establish independent verification.
+
+Complete TAR backups include JSON records, release/revision history, uploaded image originals and variants, and SHA-256 checksums. Remote images remain URL references. Authentication records are excluded. Current operational limits: 50 records/import, 2 MB import payload, 1.5 MB publication snapshot, 8 MB original image, 20 MB image request, 50 MB backup. Backup restore/import tooling beyond record JSON import is not implemented; publication rollback is available.
+
+Run `npm test` for existing checks plus SQLite-backed SuggestStore integration coverage. Database changes are the additive generated migration `drizzle/0003_material_tenebrous.sql`.
