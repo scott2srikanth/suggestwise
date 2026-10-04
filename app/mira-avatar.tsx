@@ -95,5 +95,5 @@ function render(now:number){
 setStatus('ready');loop=requestAnimationFrame(render);
 }catch{if(!cancelled)setStatus('fallback');dispose()}}
 void initialize();return()=>{cancelled=true;dispose()}},[]);
-return <div className="mira-stage" data-renderer={status} role="img" aria-label="Mira, CARWISE’s animated 3D presenter"><div className="mira-stage-light" aria-hidden="true"/><div ref={container} className="mira-canvas"/>{status!=='ready'&&<div className="mira-stage-fallback"><img src="/mira-guide.png" alt=""/><span>{status==='loading'?'Preparing Mira…':'Portrait mode · 3D unavailable'}</span></div>}</div>
+return <div className="mira-stage" data-renderer={status} role="img" aria-label="Mira, SuggestWise’s animated 3D presenter"><div className="mira-stage-light" aria-hidden="true"/><div ref={container} className="mira-canvas"/>{status!=='ready'&&<div className="mira-stage-fallback"><img src="/mira-guide.png" alt=""/><span>{status==='loading'?'Preparing Mira…':'Portrait mode · 3D unavailable'}</span></div>}</div>
 }

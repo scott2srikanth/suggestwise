@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CARWISE — Car Buying Decision Intelligence",
-  description: "Compare cars by the things that actually matter. Transparent car scorecards, comparisons and ownership estimates for India.",
+  title: "SuggestWise — Decision Intelligence for India",
+  description: "Compare cars, travel, restaurants, hotels, Hyderabad homes and education using transparent criteria and personalized rankings.",
   other: {
     "codex-preview": "development",
   },
