@@ -87,3 +87,7 @@ html:has(.decision-page){overflow:hidden}
 .guide-character .mira-buffer{font-size:12px;line-height:1.35}
 @media(max-width:760px){.decision-page .talking-guide{grid-template-rows:minmax(270px,46%) minmax(0,1fr)}.guide-character .mira-presenter{width:100%}.guide-character .guide-playback{padding:8px;bottom:8px;left:8px;right:8px}.guide-character .guide-playback .primary{flex:1 1 auto}.guide-character .guide-speed{width:110px;max-width:110px;grid-template-columns:1fr;gap:5px;margin:0}.guide-character .mira-buffer{width:auto;flex:1 1 100%;font-size:11px}.mira-presenter .mira-motion-control{top:8px;right:8px;font-size:11px;padding:6px 8px}}
 @media(max-height:520px){.guide-character .guide-speed,.guide-character .mira-buffer{display:none}.guide-character .guide-playback{padding:6px;bottom:6px;left:6px;right:6px}.mira-presenter .mira-motion-control{font-size:11px;padding:6px}.decision-page .talking-guide{grid-template-rows:minmax(175px,50%) minmax(0,1fr)}}
+
+/* Narration stays unobstructed while Mira speaks; controls return on pause. */
+.mira-speaking .guide-workspace .guide-heading{display:none}
+.mira-speaking .guide-workspace{scroll-padding-top:18px}
