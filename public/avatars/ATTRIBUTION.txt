@@ -3,4 +3,4 @@ Source: https://github.com/met4citizen/TalkingHead/blob/main/avatars/mpfb.glb
 Licence: CC0 (public domain dedication), as stated in TalkingHead README asset licences.
 https://creativecommons.org/publicdomain/zero/1.0/
 CARWISE customizes wardrobe/lighting, framing, motion, facial coarticulation and gesture choreography.
-Optimized using glTF-Transform / Meshoptimizer. Original geometry and rig retained.
+Optimized using glTF-Transform / Meshoptimizer. Original topology, UVs, skeleton and expression targets retained. CARWISE adapts head/eye proportions and consistently resculpts all expression shapes; facial normals are recomputed. Reference recording informs motion direction only; no video frames or original character artwork are distributed.

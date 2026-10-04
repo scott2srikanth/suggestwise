@@ -30,7 +30,7 @@ export function gesturePlan(time:number,topic:string){
 export function expressionFor(topic:string,emotion:MiraEmotion,speaking:boolean,time:number){
  const delivery=emotion==='auto'?(['safety','tradeoffs'].includes(topic)?'empathetic':'neutral'):emotion;
  const pulse=speaking?(.5+.5*Math.sin(time*1.35)):0;
- return {smile:delivery==='cheerful'?.3:delivery==='empathetic'?.075:.15,cheek:delivery==='cheerful'?.13:.045,browInner:delivery==='empathetic'?.13+pulse*.07:.035+pulse*.055,browOuter:delivery==='cheerful'?.1+pulse*.055:.025+pulse*.025};
+ return {smile:delivery==='cheerful'?.42:delivery==='empathetic'?.12:.27,cheek:delivery==='cheerful'?.17:.07,browInner:delivery==='empathetic'?.13+pulse*.07:.035+pulse*.055,browOuter:delivery==='cheerful'?.1+pulse*.055:.025+pulse*.025};
 }
 /** Analytical two-bone reach. The pole places the elbow outside the torso. */
 export function solveArm(shoulder:Point3,target:Point3,pole:Point3,upper:number,lower:number){
@@ -42,4 +42,16 @@ export function solveArm(shoulder:Point3,target:Point3,pole:Point3,upper:number,
  const norm=length(bend);bend=bend.map(v=>v/norm) as Point3;
  const along=(upper*upper-lower*lower+distance*distance)/(2*distance),out=Math.sqrt(Math.max(0,upper*upper-along*along));
  return {elbow:shoulder.map((v,i)=>v+dir[i]*along+bend[i]*out) as Point3,wrist:shoulder.map((v,i)=>v+dir[i]*distance) as Point3};
+}
+
+export type PresenterPose='gather'|'welcome'|'open'|'left'|'right';
+export type PoseBlend=Record<PresenterPose,number>;
+/** Authored anticipation, gesture, hold and settle phases inspired by the supplied reference. */
+export function presenterChoreography(time:number,topic:string):PoseBlend{
+ const cycle=Math.floor(Math.max(0,time)/13.6),phase=Math.max(0,time)%13.6,compare=topic==='compare';
+ const lead:PresenterPose=cycle%2===0?'left':'right',follow:PresenterPose=lead==='left'?'right':'left';
+ const keys:[number,PresenterPose][]=[[0,cycle===0?'welcome':'gather'],[.8,cycle===0?'welcome':'gather'],[1.8,'open'],[3.5,'open'],[4.8,'gather'],[5.9,compare?'open':lead],[7.5,compare?'open':lead],[8.8,compare?'open':follow],[10.2,compare?'open':follow],[11.7,'gather'],[13.6,'gather']];
+ let i=0;while(i<keys.length-2&&phase>=keys[i+1][0])i++;
+ const t=Math.max(0,Math.min(1,(phase-keys[i][0])/(keys[i+1][0]-keys[i][0]))),ease=t*t*t*(t*(t*6-15)+10);
+ const pose:PoseBlend={gather:0,welcome:0,open:0,left:0,right:0};pose[keys[i][1]]+=1-ease;pose[keys[i+1][1]]+=ease;return pose;
 }
