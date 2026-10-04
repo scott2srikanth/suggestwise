@@ -2,6 +2,7 @@ import vinext from "vinext";
 import { defineConfig } from "vite";
 import { resolve } from "node:path";
 import hostingConfig from "./.openai/hosting.json";
+import cloudflareConfig from "./cloudflare.config.json";
 import { readExecutionProfile } from "./scripts/execution-profile.mjs";
 import { sites } from "./build/sites-vite-plugin";
 import { connectorPreview } from "./build/connector-preview-plugin.mjs";
@@ -11,7 +12,7 @@ const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
 
 const { d1 } = hostingConfig;
 const directWorkers = process.env.DEPLOY_TARGET === 'cloudflare';
-const directDatabaseId = process.env.CLOUDFLARE_D1_DATABASE_ID;
+const directDatabaseId = process.env.CLOUDFLARE_D1_DATABASE_ID || cloudflareConfig.databaseId;
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
