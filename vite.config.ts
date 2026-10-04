@@ -11,7 +11,8 @@ const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   "00000000-0000-4000-8000-000000000000";
 
 const { d1 } = hostingConfig;
-const directWorkers = process.env.DEPLOY_TARGET === 'cloudflare';
+// Direct Workers is the production default. Sites requires an explicit opt-in.
+const directWorkers = process.env.DEPLOY_TARGET !== 'sites';
 const directDatabaseId = process.env.CLOUDFLARE_D1_DATABASE_ID || cloudflareConfig.databaseId;
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
@@ -28,7 +29,7 @@ const localBindingConfig = {
         {
           binding: d1,
           database_name: directWorkers ? "suggestwise" : "site-creator-d1",
-          database_id: directWorkers ? (directDatabaseId || SITE_CREATOR_PLACEHOLDER_DATABASE_ID) : SITE_CREATOR_PLACEHOLDER_DATABASE_ID,
+          database_id: directWorkers ? directDatabaseId : SITE_CREATOR_PLACEHOLDER_DATABASE_ID,
           migrations_dir: resolve("./drizzle"),
         },
       ]
