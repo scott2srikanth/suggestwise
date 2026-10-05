@@ -10,14 +10,13 @@ const THREE=await import('three');const {GLTFLoader}=await import('three/addons/
 const host=container.current,scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(28.5,1,.1,20);camera.position.set(0,1.46,2.05);camera.lookAt(0,1.405,0);
 const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));renderer.setClearColor(0x000000,0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;host.appendChild(renderer.domElement);renderer.domElement.setAttribute('aria-hidden','true');
 scene.add(new THREE.HemisphereLight(0xffffff,0x7785a3,2.2));const key=new THREE.DirectionalLight(0xffeee0,2.6);key.position.set(2,3,4);scene.add(key);const fill=new THREE.DirectionalLight(0xd9e9ff,1.4);fill.position.set(-3,1.8,2);scene.add(fill);const rim=new THREE.DirectionalLight(0x94baff,2);rim.position.set(1,2,-3);scene.add(rim);
-const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);let model:import('three').Group|undefined;let loop=0;const observer=new ResizeObserver(()=>resize());function resize(){const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}observer.observe(host);resize();
+const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);let model:import('three').Group|undefined;let loop=0;const observer=new ResizeObserver(()=>resize());function resize(){const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;camera.aspect=w/h;const narrow=w<500;const visibleHeight=narrow?.72:.92;const distance=visibleHeight/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)));camera.position.set(0,narrow?1.46:1.405,Math.max(1.75,distance));camera.lookAt(0,narrow?1.46:1.405,0);camera.updateProjectionMatrix();renderer.setSize(w,h,false)}observer.observe(host);resize();
 function cleanup(){cancelAnimationFrame(loop);observer.disconnect();if(model)model.traverse(object=>{const mesh=object as import('three').Mesh;if(mesh.isMesh){mesh.geometry.dispose();const materials=Array.isArray(mesh.material)?mesh.material:[mesh.material];for(const material of materials){for(const value of Object.values(material)){if(value instanceof THREE.Texture)value.dispose()}material.dispose()}}});renderer.dispose();renderer.forceContextLoss();renderer.domElement.remove()}
 dispose=cleanup;
 const gltf=await loader.loadAsync('/avatars/mira-reference-3d.glb?v=uv-soft-seams-20261004');if(cancelled){model=gltf.scene;cleanup();return}model=gltf.scene;scene.add(model);
-const bones=new Map<string,import('three').Object3D>(),base=new Map<string,import('three').Euler>(),morphs:import('three').Mesh[]=[];model.traverse(object=>{const name=object.name.replace(/^mixamorig:?/,'');if((object as import('three').Bone).isBone){bones.set(name,object);base.set(name,object.rotation.clone())}const mesh=object as import('three').Mesh;if(mesh.isMesh){mesh.frustumCulled=false;if(mesh.morphTargetDictionary&&mesh.morphTargetInfluences)morphs.push(mesh);for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material]){const m=material as import('three').MeshStandardMaterial;if(m.name.includes('female_casualsuit')){m.color.set('#ffffff');m.roughness=.78}if(m.name.includes('ponytail'))m.color.set('#292d38');if(m.name.includes('body')){m.color.set('#ffffff');m.roughness=.9;m.normalScale?.set(.06,.06)}if(m.name.includes('eyelashes')||m.name.includes('eyebrows')){m.side=THREE.DoubleSide;m.alphaTest=.02;m.alphaToCoverage=true}}}});
-// A recessed mouth cavity stays behind the lips and follows the head; the rig supplies real teeth/tongue.
-const head=bones.get('Head');if(head){model.updateMatrixWorld(true);const cavity=new THREE.Mesh(new THREE.SphereGeometry(1,24,16),new THREE.MeshStandardMaterial({color:'#241018',roughness:1}));cavity.scale.set(.031,.022,.022);cavity.position.copy(head.worldToLocal(new THREE.Vector3(0,1.578,.105)));head.getWorldQuaternion(cavity.quaternion);cavity.quaternion.invert();head.add(cavity)}
-bones.get('Head')?.scale.setScalar(1.2);
+const bones=new Map<string,import('three').Object3D>(),base=new Map<string,import('three').Euler>(),morphs:import('three').Mesh[]=[];model.traverse(object=>{const name=object.name.replace(/^mixamorig:?/,'');if((object as import('three').Bone).isBone){bones.set(name,object);base.set(name,object.rotation.clone())}const mesh=object as import('three').Mesh;if(mesh.isMesh){mesh.frustumCulled=false;if(mesh.morphTargetDictionary&&mesh.morphTargetInfluences)morphs.push(mesh);for(const material of Array.isArray(mesh.material)?mesh.material:[mesh.material]){const m=material as import('three').MeshStandardMaterial;if(m.name.includes('female_casualsuit')){m.color.set('#ffffff');m.roughness=.78}if(m.name.includes('ponytail'))m.color.set('#292d38');if(m.name.includes('teeth')){m.color.set('#e9dfd3');m.roughness=.65;m.metalness=0;m.side=THREE.FrontSide}if(m.name.includes('tongue')){m.roughness=.72;m.metalness=0;m.side=THREE.FrontSide}if(m.map){m.map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());m.map.minFilter=THREE.LinearMipmapLinearFilter;m.map.magFilter=THREE.LinearFilter;m.map.needsUpdate=true}if(m.name.includes('body')){m.color.set('#ffffff');m.roughness=.9;m.normalScale?.set(.06,.06)}if(m.name.includes('eyelashes')||m.name.includes('eyebrows')){m.side=THREE.DoubleSide;m.alphaTest=.02;m.alphaToCoverage=true}}}});
+// Use the rig's skinned mouth interior; a static cavity does not follow lip morphs.
+bones.get('Head')?.scale.setScalar(1.08);
 // A readable name badge follows the existing chest bone, including torso gestures.
 const badgeCanvas=document.createElement('canvas');badgeCanvas.width=512;badgeCanvas.height=160;
 const badgeContext=badgeCanvas.getContext('2d');if(badgeContext){badgeContext.fillStyle='#17345b';badgeContext.fillRect(0,0,512,160);badgeContext.strokeStyle='#c7dcff';badgeContext.lineWidth=9;badgeContext.strokeRect(7,7,498,146);badgeContext.fillStyle='#ffffff';badgeContext.font='700 86px sans-serif';badgeContext.textAlign='center';badgeContext.textBaseline='middle';badgeContext.fillText('MIRA',256,85);const badgeTexture=new THREE.CanvasTexture(badgeCanvas);badgeTexture.colorSpace=THREE.SRGBColorSpace;const badge=new THREE.Mesh(new THREE.PlaneGeometry(.115,.036),new THREE.MeshBasicMaterial({map:badgeTexture,side:THREE.DoubleSide}));const chest=bones.get('Spine2');model.updateMatrixWorld(true);if(chest){chest.add(badge);badge.position.copy(chest.worldToLocal(new THREE.Vector3(.075,1.395,.17)));chest.getWorldQuaternion(badge.quaternion);badge.quaternion.invert()}else{model.add(badge);badge.position.set(.075,1.395,.17)}}
@@ -65,9 +64,9 @@ function render(now:number){
  const {audio,cues,energy,elapsed}=latest.current.playback(),speaking=!!audio&&!audio.paused&&!audio.ended;
  const utterance=speaking?audio.currentTime:0,speechTime=elapsed+utterance,moving=latest.current.motion&&!document.hidden;
  const amplitude=speaking?energyAt(energy,utterance):0,targets=speaking?speechWeights(cues,utterance,amplitude):{};
- const expression=expressionFor(latest.current.topic,latest.current.emotion,speaking,speechTime);
+ const expression=expressionFor(latest.current.topic,latest.current.emotion,speaking,speaking?speechTime:alive);
  smooth.energy=smoothValue(smooth.energy||0,amplitude,dt,8);
- const face=facialPerformance(speechTime,smooth.energy,speaking);
+ const face=facialPerformance(speaking?speechTime:alive,smooth.energy,speaking);
  const articulation=Math.min(1,Object.values(targets).reduce((sum,value)=>sum+value,0));
  // Keep expressions away from the mouth's speech shapes; eyes/brows carry most of the emotion.
  targets.eyeBlinkLeft=targets.eyeBlinkRight=moving?blinkAt(alive):0;
@@ -79,15 +78,18 @@ function render(now:number){
  targets.eyeSquintLeft=targets.eyeSquintRight=expression.cheek*.3;
  targets.eyeWideLeft=targets.eyeWideRight=speaking?.055+(moving?face.wide:0):0;
  const gaze=moving?face.gaze:0;targets.eyeLookOutLeft=Math.max(0,gaze);targets.eyeLookInRight=Math.max(0,gaze);targets.eyeLookInLeft=Math.max(0,-gaze);targets.eyeLookOutRight=Math.max(0,-gaze);
- Object.assign(targets,speaking?mouthMuscles(targets,amplitude):{});
+ const muscles:Record<string,number>=speaking?mouthMuscles(targets,amplitude):{};
+ // Visemes already contain jaw/teeth deformation; avoid adding a second jaw opening.
+ if(Object.keys(targets).some(name=>name.startsWith('viseme_')&&morphNames.has(name)))delete muscles.jawOpen;
+ Object.assign(targets,muscles);
  if(speaking&&!cues.length)targets.jawOpen=amplitude*.25;
- for(const name of morphNames)smooth[name]=smoothValue(smooth[name]||0,targets[name]||0,dt,name.startsWith('eyeBlink')?42:name.startsWith('viseme_')||name.startsWith('mouth')||name==='jawOpen'||name==='tongueOut'?32:9);
+ for(const name of morphNames)smooth[name]=smoothValue(smooth[name]||0,targets[name]||0,dt,name.startsWith('eyeBlink')?42:name.startsWith('viseme_')||name.startsWith('mouth')||name==='jawOpen'||name==='tongueOut'?24:7);
  for(const mesh of morphs)for(const [name,index] of Object.entries(mesh.morphTargetDictionary!))mesh.morphTargetInfluences![index]=smooth[name];
  const planned=presenterChoreography(speechTime,latest.current.topic),blend={} as Record<PresenterPose,number>;
  for(const kind of poseNames){const target=moving&&speaking?planned[kind]:kind==='gather'?1:0;blend[kind]=smoothValue(smooth['pose_'+kind]??(kind==='gather'?1:0),target,dt,5);smooth['pose_'+kind]=blend[kind]}
  const breathing=moving?Math.sin(alive*1.5)*.005:0,accent=moving?face.nod:0;
  const tilt=moving?(blend.welcome*.04+face.tilt):0;
- pose('Head',accent,moving?face.yaw:0,tilt);
+ smooth.headNod=smoothValue(smooth.headNod||0,accent,dt,4);smooth.headYaw=smoothValue(smooth.headYaw||0,moving?face.yaw:0,dt,3);smooth.headTilt=smoothValue(smooth.headTilt||0,tilt,dt,3);pose('Head',smooth.headNod,smooth.headYaw,smooth.headTilt);
  pose('Neck',breathing*.5+accent*.18,0,tilt*.15);pose('Spine2',breathing,0,(blend.right-blend.left)*.018);
  hand('Left',blend,speechTime);hand('Right',blend,speechTime);
  model!.position.y=breathing*.15;renderer.render(scene,camera);

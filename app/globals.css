@@ -149,3 +149,22 @@ html:has(.decision-page){overflow:hidden}
 @media(max-width:1000px){.mira-hub{padding:0 18px 16px}.mira-workspace-label{display:none}.mira-hub-toolbar{gap:12px}.mira-hub .decision-page .talking-guide{grid-template-columns:minmax(285px,40%) minmax(0,1fr)}.mira-hub .guide-workspace{padding:0 18px 20px}.mira-hub .guide-heading h2{font-size:22px}}
 @media(max-width:760px){.mira-hub{height:calc(100dvh - 130px);padding:0 12px 10px}.mira-hub-toolbar{min-height:54px;gap:0}.mira-hub .mira-domains button{padding:8px 11px;font-size:13px;min-height:40px}.mira-catalogue-status{display:none}.mira-hub .decision-page{padding-top:12px}.mira-hub .decision-page>.section-top h1{font-size:23px;max-width:none;letter-spacing:-.6px}.mira-hub .decision-page .talking-guide{grid-template-columns:1fr;grid-template-rows:minmax(200px,42%) minmax(0,1fr);margin-top:12px;border-radius:12px}.mira-hub .guide-workspace{padding:0 14px 18px}.mira-hub .guide-heading{padding:14px 0}.mira-hub .guide-heading h2{font-size:20px}.mira-hub .guide-character .guide-playback{left:10px;right:10px;bottom:10px}.mira-hub .guide-topics{grid-template-columns:repeat(2,minmax(0,1fr))}.mira-hub .guide-topics button{font-size:13px;min-height:42px}}
 @media(max-height:650px) and (min-width:761px){.mira-hub-toolbar{min-height:48px}.mira-hub .decision-page{padding-top:12px}.mira-hub .decision-page>.section-top .eyebrow,.mira-hub .decision-page>.section-top p{display:none}.mira-hub .decision-page .talking-guide{margin-top:12px}.mira-hub .guide-heading{padding:16px 0}}
+/* Phone presenter stays framed within the workspace, with reachable controls. */
+@media(max-width:760px){
+ .mira-hub{height:calc(100svh - 130px);padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+ .mira-hub .decision-page .talking-guide{grid-template-rows:minmax(190px,38%) minmax(0,1fr)}
+ .mira-hub .guide-character.professional{position:relative;height:100%;min-height:0;overflow:hidden}
+ .mira-hub .mira-presenter .mira-canvas{inset:0 0 56px;height:auto}
+ .mira-hub .guide-character .guide-playback{left:8px;right:8px;bottom:8px;min-height:44px;padding:6px;background:#ffffffed;display:flex;gap:6px;flex-wrap:wrap;width:auto;max-width:none;border-left:0}
+ .mira-hub .guide-character .guide-playback .primary{min-height:42px;font-size:14px;flex:1}
+ .mira-hub .guide-character .guide-speed,.mira-hub .guide-character .mira-buffer{display:none}
+ .mira-hub .mira-motion-control{top:8px;right:8px;min-height:36px;font-size:12px;padding:8px}
+ .mira-hub .guide-heading .eyebrow{font-size:11px;letter-spacing:1px}
+ .mira-hub .guide-panel-nav button{min-height:42px;font-size:13px;flex:1;padding:8px}
+ .mira-hub .guide-settings{padding:12px;gap:12px}
+ .mira-hub .guide-question input{font-size:16px;min-height:46px}
+ .mira-hub .guide-workspace{scroll-padding-top:14px}
+ .mira-hub .mira-speaking .mira-canvas{inset:0}
+ .mira-hub .mira-speaking .guide-playback{display:none!important}
+}
+@media(max-width:380px){.mira-hub .decision-page>.section-top h1{font-size:20px}.mira-hub .decision-page .talking-guide{grid-template-rows:minmax(175px,35%) minmax(0,1fr)}.mira-hub .guide-heading h2{font-size:18px}}

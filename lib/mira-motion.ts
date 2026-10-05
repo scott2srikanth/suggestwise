@@ -44,7 +44,8 @@ export function gesturePlan(time:number,topic:string){
 export function expressionFor(topic:string,emotion:MiraEmotion,speaking:boolean,time:number){
  const delivery=emotion==='auto'?(['safety','tradeoffs'].includes(topic)?'empathetic':'neutral'):emotion;
  const pulse=speaking?(.5+.5*Math.sin(time*1.35)):0;
- return {smile:delivery==='cheerful'?.42:delivery==='empathetic'?.12:.27,cheek:delivery==='cheerful'?.17:.07,browInner:delivery==='empathetic'?.13+pulse*.07:.035+pulse*.055,browOuter:delivery==='cheerful'?.1+pulse*.055:.025+pulse*.025};
+ const warmth=.035*Math.sin(time*.63)+.025*Math.sin(time*.29);
+ return {smile:(delivery==='cheerful'?.34:delivery==='empathetic'?.1:.18)+warmth,cheek:delivery==='cheerful'?.17:.07,browInner:delivery==='empathetic'?.13+pulse*.07:.035+pulse*.055,browOuter:delivery==='cheerful'?.1+pulse*.055:.025+pulse*.025};
 }
 /** Analytical two-bone reach. The pole places the elbow outside the torso. */
 export function solveArm(shoulder:Point3,target:Point3,pole:Point3,upper:number,lower:number){
