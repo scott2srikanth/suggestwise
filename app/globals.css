@@ -168,3 +168,4 @@ html:has(.decision-page){overflow:hidden}
  .mira-hub .mira-speaking .guide-playback{display:none!important}
 }
 @media(max-width:380px){.mira-hub .decision-page>.section-top h1{font-size:20px}.mira-hub .decision-page .talking-guide{grid-template-rows:minmax(175px,35%) minmax(0,1fr)}.mira-hub .guide-heading h2{font-size:18px}}
+.mira-welcome-caption{margin:16px 0;padding:14px 16px;border-left:3px solid #345be4;background:#f0f4ff;color:#344a6b;font-size:14px;line-height:1.6}
