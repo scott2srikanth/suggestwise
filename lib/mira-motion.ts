@@ -8,18 +8,29 @@ export function speechEnergy(samples:Float32Array,sampleRate:number):SpeechEnerg
  return {step,values};
 }
 export function energyAt(energy:SpeechEnergy|undefined,time:number){if(!energy)return 1;const index=time/energy.step,lo=Math.floor(index);if(lo<0||lo>=energy.values.length)return 0;return energy.values[lo]*(1-(index-lo))+(energy.values[lo+1]||0)*(index-lo)}
+/** Audio-clock phoneme articulation with anticipatory coarticulation and firm bilabial closure. */
 export function speechWeights(cues:VisemeCue[],time:number,energy=1){
  const weights:Record<string,number>={};let low=0,high=cues.length-1,index=-1;
- while(low<=high){const mid=(low+high)>>1;if(cues[mid].seconds<=time+.03){index=mid;low=mid+1}else high=mid-1}
- for(let i=Math.max(0,index-2);i<=Math.min(cues.length-1,index+1);i++){
-  const c=cues[i],kind=c.viseme;if(!kind||kind==='sil')continue;
-  const start=c.seconds-.03,end=c.seconds+c.duration+.02;if(time<start||time>end)continue;
-  const attack=Math.min(1,(time-start)/Math.min(.04,Math.max(.015,c.duration*.4))),release=Math.min(1,(end-time)/.035);
-  const amplitude=kind==='PP'?1:.3+.7*Math.min(1,Math.max(0,energy));
-  weights['viseme_'+kind]=Math.max(weights['viseme_'+kind]||0,Math.max(0,Math.min(attack,release))*.9*amplitude);
+ while(low<=high){const mid=(low+high)>>1;if(cues[mid].seconds<=time+.04){index=mid;low=mid+1}else high=mid-1}
+ const ease=(v:number)=>{const t=Math.max(0,Math.min(1,v));return t*t*(3-2*t)};
+ const gain:Record<string,number>={aa:.68,E:.6,I:.55,O:.65,U:.62,PP:.95,FF:.7,TH:.55,DD:.55,kk:.5,nn:.5,RR:.55,CH:.6,SS:.58};
+ for(let i=Math.max(0,index-2);i<=Math.min(cues.length-1,index+2);i++){
+  const c=cues[i],kind=c.viseme;if(!kind||kind==='sil'||!c.duration)continue;
+  const lead=kind==='PP'?.035:.045,tail=kind==='PP'?.025:.065,start=c.seconds-lead,end=c.seconds+c.duration+tail;if(time<start||time>end)continue;
+  const attack=ease((time-start)/Math.min(.07,c.duration*.45+lead)),release=ease((end-time)/Math.min(.09,c.duration*.45+tail));
+  // Loudness only gates silence. The actual sound selects the lip shape.
+  const gate=kind==='PP'?1:Math.min(1,Math.max(0,energy)/.08);
+  weights['viseme_'+kind]=Math.max(weights['viseme_'+kind]||0,Math.min(attack,release)*(gain[kind]??.55)*gate);
  }
+ const closure=weights.viseme_PP||0;for(const name of Object.keys(weights))if(name!=='viseme_PP')weights[name]*=1-Math.min(1,closure/.65);
  const total=Object.values(weights).reduce((sum,value)=>sum+value,0);if(total>.95)for(const name of Object.keys(weights))weights[name]*=.95/total;
  return weights;
+}
+/** Authored rig visemes already move jaw, lips and teeth. Never layer duplicate muscle shapes. */
+export function rigSpeechTargets(weights:Record<string,number>,supported:Set<string>,energy:number){
+ const native=Object.entries(weights).filter(([name])=>name.startsWith('viseme_')&&supported.has(name));
+ if(native.length)return Object.fromEntries(native);
+ return mouthMuscles(weights,energy);
 }
 /** Secondary mouth muscles support the rig's visemes; teeth/tongue share the same jaw target. */
 export function mouthMuscles(weights:Record<string,number>,energy:number){

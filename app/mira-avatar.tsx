@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useRef,useState} from 'react';
 import type {VisemeCue,MiraEmotion} from '@/lib/mira-speech';
-import {blinkAt,presenterChoreography,facialPerformance,expressionFor,energyAt,solveArm,smoothValue,speechWeights,mouthMuscles,type SpeechEnergy,type Point3,type PresenterPose} from '@/lib/mira-motion';
+import {blinkAt,presenterChoreography,facialPerformance,expressionFor,energyAt,solveArm,smoothValue,speechWeights,rigSpeechTargets,type SpeechEnergy,type Point3,type PresenterPose} from '@/lib/mira-motion';
 export type MiraPlayback={audio:HTMLAudioElement|null;cues:VisemeCue[];energy?:SpeechEnergy;elapsed:number};
 export default function MiraAvatar({playback,motion,topic,emotion}:{playback:()=>MiraPlayback;motion:boolean;topic:string;emotion:MiraEmotion}){
 const container=useRef<HTMLDivElement>(null),latest=useRef({playback,motion,topic,emotion});latest.current={playback,motion,topic,emotion};const [status,setStatus]=useState<'loading'|'ready'|'fallback'>('loading');
@@ -63,7 +63,7 @@ function render(now:number){
  if(cancelled)return;const dt=Math.min(.05,(now-last)/1000);last=now;alive+=dt;
  const {audio,cues,energy,elapsed}=latest.current.playback(),speaking=!!audio&&!audio.paused&&!audio.ended;
  const utterance=speaking?audio.currentTime:0,speechTime=elapsed+utterance,moving=latest.current.motion&&!document.hidden;
- const amplitude=speaking?energyAt(energy,utterance):0,targets=speaking?speechWeights(cues,utterance,amplitude):{};
+ const amplitude=speaking?energyAt(energy,utterance):0,phonemes=speaking?speechWeights(cues,utterance,amplitude):{},targets:Record<string,number>=speaking?rigSpeechTargets(phonemes,morphNames,amplitude):{};
  const expression=expressionFor(latest.current.topic,latest.current.emotion,speaking,speaking?speechTime:alive);
  smooth.energy=smoothValue(smooth.energy||0,amplitude,dt,8);
  const face=facialPerformance(speaking?speechTime:alive,smooth.energy,speaking);
@@ -78,12 +78,8 @@ function render(now:number){
  targets.eyeSquintLeft=targets.eyeSquintRight=expression.cheek*.3;
  targets.eyeWideLeft=targets.eyeWideRight=speaking?.055+(moving?face.wide:0):0;
  const gaze=moving?face.gaze:0;targets.eyeLookOutLeft=Math.max(0,gaze);targets.eyeLookInRight=Math.max(0,gaze);targets.eyeLookInLeft=Math.max(0,-gaze);targets.eyeLookOutRight=Math.max(0,-gaze);
- const muscles:Record<string,number>=speaking?mouthMuscles(targets,amplitude):{};
- // Visemes already contain jaw/teeth deformation; avoid adding a second jaw opening.
- if(Object.keys(targets).some(name=>name.startsWith('viseme_')&&morphNames.has(name)))delete muscles.jawOpen;
- Object.assign(targets,muscles);
  if(speaking&&!cues.length)targets.jawOpen=amplitude*.25;
- for(const name of morphNames)smooth[name]=smoothValue(smooth[name]||0,targets[name]||0,dt,name.startsWith('eyeBlink')?42:name.startsWith('viseme_')||name.startsWith('mouth')||name==='jawOpen'||name==='tongueOut'?24:7);
+ for(const name of morphNames)smooth[name]=smoothValue(smooth[name]||0,targets[name]||0,dt,name.startsWith('eyeBlink')?42:name.startsWith('viseme_')||name.startsWith('mouth')||name==='jawOpen'||name==='tongueOut'?(name==='viseme_PP'?48:30):7);
  for(const mesh of morphs)for(const [name,index] of Object.entries(mesh.morphTargetDictionary!))mesh.morphTargetInfluences![index]=smooth[name];
  const planned=presenterChoreography(speechTime,latest.current.topic),blend={} as Record<PresenterPose,number>;
  for(const kind of poseNames){const target=moving&&speaking?planned[kind]:kind==='gather'?1:0;blend[kind]=smoothValue(smooth['pose_'+kind]??(kind==='gather'?1:0),target,dt,5);smooth['pose_'+kind]=blend[kind]}
