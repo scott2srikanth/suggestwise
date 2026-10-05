@@ -116,3 +116,36 @@ html:has(.decision-page){overflow:hidden}
 .mira-domains{display:flex;gap:8px;padding:9px 20px;background:#f3f6fb;border-bottom:1px solid #dce5ee;overflow-x:auto;height:48px}.mira-domains button{white-space:nowrap;padding:7px 12px;font-size:13px;color:#526981;border-radius:5px}.mira-domains .active{background:#1d4b8f;color:white}.mira-hub .decision-page{height:calc(100dvh - 128px)}.mira-hub~footer{display:none}.category-mira~footer{display:none}.category-mira .decision-results>.panel{padding:20px;margin:16px 0}.category-mira .decision-results h2{font-size:21px}.category-mira .decision-results h3{font-size:19px}.category-mira .decision-results p{font-size:14px;line-height:1.65}@media(max-width:760px){.mira-hub .decision-page{height:calc(100dvh - 178px)}.mira-domains{padding:8px 14px}.mira-domains button{font-size:12px}}
 
 .suggest-store{display:grid;gap:24px}.store-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.store-notice{padding:14px;background:#edf5ff;border-left:3px solid #355fd4;overflow-wrap:anywhere}.store-version{display:block;padding:10px;background:#f3f6fa;overflow-wrap:anywhere}.store-history p{padding:8px 0;border-bottom:1px solid #e7edf4;font-size:14px}.store-history small{display:block;color:#69798e}.store-assets{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}.store-assets article{display:grid;gap:8px;border:1px solid #dce5ef;padding:12px}.store-assets img{width:100%;height:130px;object-fit:contain;background:#f3f6fa}.store-assets code{font-size:12px;overflow-wrap:anywhere}.store-assets small{color:#687991}.suggest-store .panel p{line-height:1.6;margin:12px 0}.suggest-store ul{padding-left:20px;margin:14px 0}.suggest-store .import-preview .secondary{margin-left:8px}@media(max-width:760px){.store-grid{grid-template-columns:1fr}.suggest-store .section-top{flex-wrap:wrap}}
+
+/* Mira workspace: bounded stage, compact navigation, one scrolling panel. */
+.mira-hub{height:calc(100dvh - 80px);min-height:0;display:flex;flex-direction:column;max-width:1600px;margin:auto;padding:0 28px 22px}
+.mira-hub-toolbar{display:flex;align-items:center;gap:24px;flex:none;min-height:62px;border-bottom:1px solid #dce4ef;position:relative}
+.mira-workspace-label{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700;letter-spacing:1.5px;color:#536680;white-space:nowrap}
+.mira-workspace-dot{width:8px;height:8px;border-radius:50%;background:#345be4}
+.mira-hub .mira-domains{flex:1;height:auto;min-width:0;border:0;background:transparent;padding:0;gap:4px}
+.mira-hub .mira-domains button{font-size:14px;padding:10px 14px;min-height:42px;color:#4e6079;border-radius:7px}
+.mira-hub .mira-domains .active{color:#2343a8;background:#e8edff;font-weight:650}
+.mira-catalogue-status{position:relative;font-size:12px;color:#68768b;flex:none}
+.mira-catalogue-status summary{cursor:pointer;padding:10px 0;list-style:none;border-bottom:1px dashed #99a7bc}
+.mira-catalogue-status[open]{position:absolute;right:0;top:10px;z-index:10;background:white;border:1px solid #dce4ef;border-radius:8px;padding:0 14px 10px;max-width:320px;box-shadow:0 10px 25px #12294918}
+.mira-catalogue-status p{font-size:13px;line-height:1.6;margin:10px 0 0}
+.mira-hub .decision-page{flex:1;min-height:0;height:auto;width:100%;max-width:none;margin:0;padding:20px 0 0}
+.mira-hub .decision-page>.section-top{gap:16px;margin:0}
+.mira-hub .decision-page>.section-top h1{font-size:clamp(24px,2.4vw,34px);letter-spacing:-1px;margin:4px 0 6px}
+.mira-hub .decision-page>.section-top .eyebrow{font-size:11px;letter-spacing:1.6px}
+.mira-hub .decision-page>.section-top p{font-size:14px;color:#66768d}
+.mira-hub .decision-page .talking-guide{margin-top:18px;grid-template-columns:minmax(340px,42%) minmax(0,1fr);border:1px solid #d8e2ef;border-radius:16px;box-shadow:0 8px 28px #132b4810}
+.mira-hub .guide-character.professional{height:100%;background:#e6edf7;border-right:1px solid #d8e2ef}
+.mira-hub .guide-workspace{padding:0 26px 26px;background:#fff;scrollbar-gutter:stable}
+.mira-hub .guide-heading{background:#fff;padding:22px 0 18px}
+.mira-hub .guide-heading h2{font-size:24px;line-height:1.3;letter-spacing:-.6px}
+.mira-hub .guide-panel-nav{display:flex;gap:6px;flex-wrap:wrap;padding-top:10px}
+.mira-hub .guide-panel-nav button{padding:9px 13px;border-radius:6px;font-size:13px;min-height:38px}
+.mira-hub .guide-topics{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:18px 0}
+.mira-hub .guide-topics button{min-height:46px;border:1px solid #dce4ef;background:#f7f9fc;font-size:13px;text-align:center;border-radius:8px;color:#405674}
+.mira-hub .guide-topics button.chosen{background:#244eac;border-color:#244eac;color:#fff}
+.mira-hub .guide-character .guide-playback{border-radius:12px;box-shadow:0 5px 18px #122b4520;left:18px;right:18px;bottom:18px}
+.mira-hub .mira-motion-control{font-size:12px;border-radius:8px;top:16px;right:16px}
+@media(max-width:1000px){.mira-hub{padding:0 18px 16px}.mira-workspace-label{display:none}.mira-hub-toolbar{gap:12px}.mira-hub .decision-page .talking-guide{grid-template-columns:minmax(285px,40%) minmax(0,1fr)}.mira-hub .guide-workspace{padding:0 18px 20px}.mira-hub .guide-heading h2{font-size:22px}}
+@media(max-width:760px){.mira-hub{height:calc(100dvh - 130px);padding:0 12px 10px}.mira-hub-toolbar{min-height:54px;gap:0}.mira-hub .mira-domains button{padding:8px 11px;font-size:13px;min-height:40px}.mira-catalogue-status{display:none}.mira-hub .decision-page{padding-top:12px}.mira-hub .decision-page>.section-top h1{font-size:23px;max-width:none;letter-spacing:-.6px}.mira-hub .decision-page .talking-guide{grid-template-columns:1fr;grid-template-rows:minmax(200px,42%) minmax(0,1fr);margin-top:12px;border-radius:12px}.mira-hub .guide-workspace{padding:0 14px 18px}.mira-hub .guide-heading{padding:14px 0}.mira-hub .guide-heading h2{font-size:20px}.mira-hub .guide-character .guide-playback{left:10px;right:10px;bottom:10px}.mira-hub .guide-topics{grid-template-columns:repeat(2,minmax(0,1fr))}.mira-hub .guide-topics button{font-size:13px;min-height:42px}}
+@media(max-height:650px) and (min-width:761px){.mira-hub-toolbar{min-height:48px}.mira-hub .decision-page{padding-top:12px}.mira-hub .decision-page>.section-top .eyebrow,.mira-hub .decision-page>.section-top p{display:none}.mira-hub .decision-page .talking-guide{margin-top:12px}.mira-hub .guide-heading{padding:16px 0}}
